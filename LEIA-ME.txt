@@ -2,9 +2,10 @@ MERCADO IMPÉRIO — SITE
 ========================
 
 Arquivos:
-- index.html   → página inicial do site
+- index.html             → página inicial do site
 - pedido.html            → página de pedidos (catálogo + carrinho)
 - fotos/                 → pasta para colocar as fotos reais dos produtos
+- Dockerfile             → usado para subir o site no EasyPanel (ou qualquer host com Docker)
 
 Como abrir:
 Dê duplo clique em "index.html" para abrir o site no navegador.
@@ -25,3 +26,11 @@ Como colocar o site no ar:
 Este site é 100% estático (HTML/CSS/JS), então funciona em qualquer
 hospedagem simples (ex: Hostinger, Vercel, Netlify) ou até em um domínio
 próprio, bastando subir os dois arquivos .html e a pasta fotos.
+
+Como subir no EasyPanel:
+1. Crie o app apontando pro repositório/pasta com esses arquivos.
+2. Na etapa "Construção", escolha a opção "Dockerfile" (o Dockerfile já
+   está incluído aqui e serve os arquivos com Nginx).
+3. Configure a porta do serviço como 80.
+4. Deploy.
+
