@@ -1,0 +1,6 @@
+Salve aqui as fotos reais dos produtos.
+
+Exemplo: fotos/fraldinha.jpg
+
+Depois, em pedido.html, troque o campo "photo: null" do produto
+correspondente por "photo: 'fotos/fraldinha.jpg'".
