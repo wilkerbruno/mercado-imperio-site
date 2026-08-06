@@ -2,12 +2,12 @@ MERCADO IMPÉRIO — SITE
 ========================
 
 Arquivos:
-- mercado-imperio.html   → página inicial do site
+- index.html   → página inicial do site
 - pedido.html            → página de pedidos (catálogo + carrinho)
 - fotos/                 → pasta para colocar as fotos reais dos produtos
 
 Como abrir:
-Dê duplo clique em "mercado-imperio.html" para abrir o site no navegador.
+Dê duplo clique em "index.html" para abrir o site no navegador.
 As duas páginas já estão linkadas entre si (menu "Fazer Pedido" e botão "Voltar ao site").
 
 Como colocar fotos reais dos produtos:
