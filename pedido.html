@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fazer pedido | Mercado Império</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy: #0B1E3D;
+    --navy-2: #122A50;
+    --navy-3: #1A3B6B;
+    --gold: #E8A93B;
+    --gold-light: #F4C868;
+    --paper: #FAF3E6;
+    --paper-2: #F2E8D5;
+    --green: #4E7A45;
+    --red: #B8433D;
+    --ink: #17181C;
+    --ink-soft: #4a4a52;
+    --line: rgba(11,30,61,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Manrope', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:90px;
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{ font-family:inherit; }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    color:var(--navy);
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  :focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .wrap{ max-width:1160px; margin:0 auto; padding:0 24px; }
+
+  header{
+    position:sticky; top:0; z-index:60;
+    background:rgba(11,30,61,0.97);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(232,169,59,0.25);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; color:var(--paper); }
+  .brand-mark{
+    width:36px; height:36px; border-radius:50%;
+    background:var(--gold); display:flex; align-items:center; justify-content:center;
+  }
+  .brand-mark svg{ width:19px; height:19px; stroke:var(--navy); fill:none; stroke-width:2; }
+  .brand-name{ font-family:'Fraunces', serif; font-weight:700; font-size:18px; line-height:1.15; }
+  .brand-name span{ display:block; font-family:'JetBrains Mono', monospace; font-weight:400; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-light); margin-top:2px; }
+  .back-link{ font-size:13.5px; color:rgba(250,243,230,0.7); display:flex; align-items:center; gap:6px; }
+  .back-link:hover{ color:var(--gold-light); }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:12px; text-transform:uppercase;
+    letter-spacing:0.14em; color:var(--gold); display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:""; width:20px; height:1px; background:var(--gold); display:inline-block; }
+
+  .page-hero{
+    background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    color:var(--paper);
+    padding:44px 0 40px;
+  }
+  .page-hero h1{ color:var(--paper); font-size:clamp(28px,3.6vw,42px); margin-top:12px; }
+  .page-hero p{ color:rgba(250,243,230,0.72); margin-top:10px; max-width:520px; font-size:15.5px; }
+
+  .content{
+    display:grid;
+    grid-template-columns:1fr 360px;
+    gap:36px;
+    padding:44px 0 60px;
+    align-items:flex-start;
+  }
+
+  /* CATEGORY TABS */
+  .tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .tab{
+    padding:9px 18px; border-radius:999px; border:1px solid var(--line);
+    background:var(--paper); font-size:13.5px; font-weight:700; cursor:pointer;
+    color:var(--ink-soft); transition:all .15s ease;
+  }
+  .tab.active{ background:var(--navy); border-color:var(--navy); color:var(--paper); }
+  .tab:hover:not(.active){ border-color:var(--navy); color:var(--navy); }
+
+  .product-grid{ display:flex; flex-direction:column; gap:12px; }
+  .product-card{
+    background:#fff; border:1px solid var(--line); border-radius:3px;
+    display:flex; align-items:center; gap:16px; padding:12px 16px;
+  }
+  .product-photo{
+    width:72px; height:72px; flex:none; border-radius:4px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .product-photo svg{ width:40px; height:40px; position:relative; z-index:1; }
+  .product-photo::after{
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(rgba(11,30,61,0.05) 1px, transparent 1.4px);
+    background-size:10px 10px;
+  }
+  .cat-Açougue .product-photo{ background:#F4E3DE; }
+  .cat-Padaria .product-photo{ background:#F7E8C9; }
+  .cat-Hortifruti .product-photo{ background:#E3EFDA; }
+  .cat-Frios .product-photo{ background:#E4EEF7; }
+  img.product-photo-img{ width:100%; height:100%; object-fit:cover; }
+  .product-card-body{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .product-card-actions{ flex:none; }
+  .product-cat{ font-family:'JetBrains Mono', monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); font-weight:700; }
+  .product-name{ font-family:'Fraunces', serif; font-weight:700; font-size:16.5px; color:var(--navy); line-height:1.2; }
+  .product-price{ font-family:'JetBrains Mono', monospace; font-size:14px; color:var(--green); font-weight:700; }
+  .product-price span{ color:var(--ink-soft); font-weight:400; font-size:12px; }
+  .product-actions{
+    flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  }
+  .weight-row{ display:flex; gap:6px; align-items:center; }
+  .weight-input{
+    width:88px; padding:7px 9px; border:1px solid var(--line); border-radius:6px;
+    font-family:'JetBrains Mono', monospace; font-size:13px; text-align:right;
+  }
+  .unit-toggle{ display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; flex:none; }
+  .unit-toggle button{
+    padding:6px 8px; border:none; background:var(--paper-2); font-size:11px; font-weight:700;
+    cursor:pointer; color:var(--ink-soft);
+  }
+  .unit-toggle button.active{ background:var(--navy); color:var(--paper); }
+  .price-preview{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--green); font-weight:700; }
+  .qty-stepper{ display:flex; align-items:center; border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+  .qty-stepper button{
+    width:30px; height:30px; border:none; background:var(--paper-2); cursor:pointer;
+    font-size:16px; font-weight:700; color:var(--navy);
+  }
+  .qty-stepper button:hover{ background:var(--gold-light); }
+  .qty-stepper span{ width:32px; text-align:center; font-family:'JetBrains Mono', monospace; font-size:13.5px; }
+  .add-btn{
+    background:var(--navy); color:var(--paper); border:none; border-radius:999px;
+    padding:8px 16px; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .add-btn:hover{ background:var(--navy-3); }
+  .add-btn.added{ background:var(--green); }
+
+  /* CART PANEL */
+  .cart-panel{
+    background:var(--navy); color:var(--paper);
+    border-radius:3px; padding:24px 22px;
+    position:sticky; top:92px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .cart-panel h2{ color:var(--gold-light); font-size:17px; margin-bottom:4px; font-family:'Fraunces', serif; }
+  .cart-sub{ font-size:11.5px; color:rgba(250,243,230,0.55); margin-bottom:18px; }
+  .cart-empty{ font-size:13px; color:rgba(250,243,230,0.55); padding:20px 0; text-align:center; }
+  .cart-list{ display:flex; flex-direction:column; gap:0; max-height:280px; overflow-y:auto; margin-bottom:6px; }
+  .cart-item{
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    padding:10px 0; border-bottom:1px dashed rgba(250,243,230,0.18); font-size:12.5px;
+  }
+  .cart-item-name{ flex:1; }
+  .cart-item-name small{ display:block; color:rgba(250,243,230,0.5); font-size:10.5px; margin-top:2px; }
+  .cart-item-remove{ background:none; border:none; color:rgba(250,243,230,0.5); cursor:pointer; font-size:15px; line-height:1; padding:0 4px; }
+  .cart-item-remove:hover{ color:var(--red); }
+  .cart-total-row{
+    display:flex; justify-content:space-between; padding-top:14px; margin-top:8px;
+    border-top:1.5px dashed rgba(250,243,230,0.35);
+    font-size:15px; font-weight:700; color:var(--gold-light);
+  }
+  .cart-cta{
+    width:100%; margin-top:18px; background:var(--gold); color:var(--navy); border:none;
+    border-radius:999px; padding:13px; font-weight:800; font-size:14px; cursor:pointer;
+    font-family:'Manrope', sans-serif;
+  }
+  .cart-cta:hover{ background:var(--gold-light); }
+  .cart-cta:disabled{ opacity:0.4; cursor:not-allowed; }
+  .cart-back{
+    width:100%; margin-top:10px; background:none; border:1px solid rgba(250,243,230,0.3);
+    color:var(--paper); border-radius:999px; padding:11px; font-weight:700; font-size:13px; cursor:pointer;
+    font-family:'Manrope', sans-serif;
+  }
+  .cart-back:hover{ border-color:var(--gold-light); color:var(--gold-light); }
+
+  /* CHECKOUT FORM */
+  .form-group{ margin-bottom:14px; }
+  .form-group label{
+    display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;
+    color:rgba(250,243,230,0.6); margin-bottom:6px;
+  }
+  .form-group input, .form-group select, .form-group textarea{
+    width:100%; padding:10px 12px; border-radius:4px; border:1px solid rgba(250,243,230,0.25);
+    background:rgba(250,243,230,0.06); color:var(--paper); font-family:'Manrope', sans-serif; font-size:13.5px;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder{ color:rgba(250,243,230,0.35); }
+  .form-group textarea{ resize:vertical; min-height:56px; }
+  .radio-row{ display:flex; gap:8px; }
+  .radio-opt{
+    flex:1; text-align:center; border:1px solid rgba(250,243,230,0.25); border-radius:4px;
+    padding:9px 6px; font-size:12px; cursor:pointer; font-family:'Manrope', sans-serif; font-weight:600;
+  }
+  .radio-opt.active{ background:var(--gold); color:var(--navy); border-color:var(--gold); }
+  .field-error{ color:#F0A6A0; font-size:11px; margin-top:5px; display:none; }
+
+  /* SUMMARY */
+  .summary-box{
+    background:var(--paper); color:var(--ink); border-radius:2px; padding:18px;
+    font-size:12.5px; white-space:pre-wrap; line-height:1.6; max-height:320px; overflow-y:auto;
+    border:1.5px dashed rgba(11,30,61,0.3);
+  }
+  .summary-actions{ display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .btn-whatsapp{
+    background:#25D366; color:#06210f; border:none; border-radius:999px; padding:13px;
+    font-weight:800; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    font-family:'Manrope', sans-serif;
+  }
+  .btn-whatsapp:hover{ filter:brightness(1.06); }
+  .btn-copy{
+    background:none; border:1px solid rgba(250,243,230,0.3); color:var(--paper); border-radius:999px;
+    padding:11px; font-weight:700; font-size:13px; cursor:pointer; font-family:'Manrope', sans-serif;
+  }
+  .btn-copy:hover{ border-color:var(--gold-light); color:var(--gold-light); }
+  .copy-note{ font-size:11px; color:var(--gold-light); text-align:center; margin-top:2px; min-height:14px; }
+  .note-box{
+    background:rgba(250,243,230,0.06); border:1px solid rgba(250,243,230,0.16); border-radius:4px;
+    padding:12px 14px; font-size:11.5px; color:rgba(250,243,230,0.7); margin-top:16px; font-family:'Manrope', sans-serif; line-height:1.5;
+  }
+
+  /* mobile cart fab */
+  .cart-fab{
+    display:none; position:fixed; bottom:20px; right:20px; z-index:70;
+    background:var(--gold); color:var(--navy); border:none; border-radius:999px;
+    padding:14px 20px; font-weight:800; font-size:14px; box-shadow:0 12px 28px rgba(0,0,0,0.3);
+    align-items:center; gap:8px; cursor:pointer; font-family:'Manrope', sans-serif;
+  }
+  .cart-fab .count{
+    background:var(--navy); color:var(--gold-light); border-radius:50%;
+    width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;
+  }
+
+  @media (max-width: 900px){
+    .content{ grid-template-columns:1fr; }
+    .cart-panel{
+      position:fixed; inset:auto 0 0 0; top:auto; z-index:80;
+      border-radius:16px 16px 0 0; max-height:82vh; overflow-y:auto;
+      transform:translateY(110%); transition:transform .28s ease;
+      box-shadow:0 -12px 30px rgba(0,0,0,0.35);
+    }
+    .cart-panel.open{ transform:translateY(0); }
+    .cart-fab{ display:flex; }
+    .product-card{ flex-wrap:wrap; }
+    .product-photo{ width:56px; height:56px; }
+    .product-photo svg{ width:32px; height:32px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="mercado-imperio.html" class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M4 8l3 1 2-4 3 4 3-4 2 4 3-1-1 8H5z"/><path d="M6 19h12"/></svg></span>
+      <span class="brand-name">Mercado Império<span>Jacaré · Cabedelo-PB</span></span>
+    </a>
+    <a class="back-link" href="mercado-imperio.html">← Voltar ao site</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">Faça seu pedido</p>
+    <h1>Monte sua sacola, a gente separa certinho.</h1>
+    <p>Escolha os produtos, ajuste as quantidades e finalize — no fim, é só confirmar pelo WhatsApp e combinar a entrega ou retirada.</p>
+  </div>
+</section>
+
+<div class="wrap content">
+  <div>
+    <div class="tabs" id="tabs"></div>
+    <div class="product-grid" id="product-grid"></div>
+  </div>
+
+  <aside class="cart-panel" id="cart-panel">
+    <!-- STEP 1: CART -->
+    <div id="step-cart">
+      <h2>Seu pedido</h2>
+      <p class="cart-sub" id="cart-count-label">Carrinho vazio</p>
+      <div id="cart-list" class="cart-list"></div>
+      <div class="cart-total-row"><span>Subtotal</span><span id="cart-total">R$ 0,00</span></div>
+      <button class="cart-cta" id="btn-checkout" disabled>Continuar para entrega</button>
+    </div>
+
+    <!-- STEP 2: CHECKOUT -->
+    <div id="step-checkout" style="display:none;">
+      <h2>Entrega</h2>
+      <p class="cart-sub">Só mais alguns dados</p>
+      <div class="form-group">
+        <label for="f-nome">Nome</label>
+        <input id="f-nome" type="text" placeholder="Seu nome">
+      </div>
+      <div class="form-group">
+        <label for="f-tel">Telefone / WhatsApp</label>
+        <input id="f-tel" type="tel" placeholder="(83) 9xxxx-xxxx">
+      </div>
+      <div class="form-group">
+        <label>Como prefere receber</label>
+        <div class="radio-row">
+          <div class="radio-opt active" data-value="Entrega" id="opt-entrega">Entrega</div>
+          <div class="radio-opt" data-value="Retirada na loja" id="opt-retirada">Retirar na loja</div>
+        </div>
+      </div>
+      <div class="form-group" id="endereco-group">
+        <label for="f-end">Endereço para entrega</label>
+        <input id="f-end" type="text" placeholder="Rua, número, bairro, ponto de referência">
+      </div>
+      <div class="form-group">
+        <label>Pagamento (na entrega/retirada)</label>
+        <div class="radio-row">
+          <div class="radio-opt active" data-value="Dinheiro">Dinheiro</div>
+          <div class="radio-opt" data-value="Cartão">Cartão</div>
+          <div class="radio-opt" data-value="Pix">Pix</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="f-obs">Observações (opcional)</label>
+        <textarea id="f-obs" placeholder="Ex: sem cebola, ponto da carne, etc."></textarea>
+      </div>
+      <p class="field-error" id="form-error">Preencha nome e telefone pra continuar.</p>
+      <button class="cart-cta" id="btn-summary">Ver resumo do pedido</button>
+      <button class="cart-back" id="btn-back-1">← Voltar ao carrinho</button>
+    </div>
+
+    <!-- STEP 3: SUMMARY -->
+    <div id="step-summary" style="display:none;">
+      <h2>Resumo do pedido</h2>
+      <p class="cart-sub">Confira e envie pelo WhatsApp</p>
+      <div class="summary-box" id="summary-text"></div>
+      <div class="summary-actions">
+        <button class="btn-whatsapp" id="btn-whatsapp">Enviar pelo WhatsApp</button>
+        <button class="btn-copy" id="btn-copy">Copiar pedido</button>
+        <p class="copy-note" id="copy-note"></p>
+      </div>
+      <div class="note-box">O pedido é confirmado com o mercado pelo WhatsApp — o pagamento é combinado direto com a loja na entrega ou retirada.</div>
+      <button class="cart-back" id="btn-back-2">← Voltar</button>
+    </div>
+  </aside>
+</div>
+
+<button class="cart-fab" id="cart-fab">
+  🛒 Ver pedido <span class="count" id="fab-count">0</span>
+</button>
+
+<script>
+(function(){
+  const PRODUCTS = [
+    // photo: leave null to use the illustrated icon below, or set a real image path
+    // (e.g. 'fotos/fraldinha.jpg') once the market sends real product photos.
+    {id:'ac1', cat:'Açougue', name:'Fraldinha', unit:'kg', price:38.99, photo:null},
+    {id:'ac2', cat:'Açougue', name:'Picanha', unit:'kg', price:59.90, photo:null},
+    {id:'ac3', cat:'Açougue', name:'Frango inteiro', unit:'kg', price:12.90, photo:null},
+    {id:'ac4', cat:'Açougue', name:'Costela bovina', unit:'kg', price:24.90, photo:null},
+    {id:'ac5', cat:'Açougue', name:'Linguiça toscana', unit:'kg', price:18.90, photo:null},
+    {id:'pd1', cat:'Padaria', name:'Pão francês', unit:'kg', price:14.90, photo:null},
+    {id:'pd2', cat:'Padaria', name:'Pão de forma', unit:'un', price:9.50, photo:null},
+    {id:'pd3', cat:'Padaria', name:'Bolo caseiro', unit:'un', price:22.00, photo:null},
+    {id:'pd4', cat:'Padaria', name:'Rosca doce', unit:'un', price:12.00, photo:null},
+    {id:'ht1', cat:'Hortifruti', name:'Tomate', unit:'kg', price:6.90, photo:null},
+    {id:'ht2', cat:'Hortifruti', name:'Banana prata', unit:'kg', price:4.50, photo:null},
+    {id:'ht3', cat:'Hortifruti', name:'Cebola', unit:'kg', price:5.90, photo:null},
+    {id:'ht4', cat:'Hortifruti', name:'Batata', unit:'kg', price:5.50, photo:null},
+    {id:'ht5', cat:'Hortifruti', name:'Alface', unit:'un', price:3.00, photo:null},
+    {id:'fr1', cat:'Frios', name:'Queijo mussarela', unit:'kg', price:34.90, photo:null},
+    {id:'fr2', cat:'Frios', name:'Presunto', unit:'kg', price:22.90, photo:null},
+    {id:'fr3', cat:'Frios', name:'Iogurte', unit:'un', price:6.50, photo:null},
+    {id:'fr4', cat:'Frios', name:'Manteiga', unit:'un', price:11.90, photo:null},
+  ];
+
+  // Illustrated product icons (used until real photos are added via the `photo` field above).
+  const ICONS = {
+    ac1: '<path d="M14 34c2-10 12-18 24-18 8 0 12 5 12 11 0 12-14 22-28 22-6 0-9-5-8-15z" fill="#A8453A"/><path d="M20 30q6-4 14-4" stroke="#7A2F28" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18 37q7-3 16-3" stroke="#7A2F28" stroke-width="2" fill="none" stroke-linecap="round"/>',
+    ac2: '<path d="M12 40c-2-12 8-24 22-26 10-1 18 4 18 12 0 14-16 24-28 24-7 0-11-4-12-10z" fill="#A8453A"/><path d="M20 24q10-6 20-4" stroke="#7A2F28" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+    ac3: '<ellipse cx="32" cy="30" rx="16" ry="14" fill="#E7C79A"/><path d="M20 40c-3 4-8 5-10 3 3-1 5-4 6-8z" fill="#E7C79A"/><path d="M24 24q8-4 16 0" stroke="#C99A5B" stroke-width="2" fill="none" stroke-linecap="round"/>',
+    ac4: '<path d="M16 18h6l4 28h-6z" fill="#A8453A"/><path d="M26 18h6l4 28h-6z" fill="#A8453A"/><path d="M36 18h6l4 28h-6z" fill="#A8453A"/><path d="M12 16h36l-3 6H15z" fill="#7A2F28"/>',
+    ac5: '<path d="M14 24c0-5 5-8 9-6 3-4 9-4 11 0 4-2 9 1 9 6s-5 8-9 6c-2 4-9 4-11 0-4 2-9-1-9-6z" fill="#8B3A2E"/><circle cx="21" cy="24" r="2" fill="#5F2620"/><circle cx="32" cy="24" r="2" fill="#5F2620"/><circle cx="43" cy="24" r="2" fill="#5F2620"/>',
+    pd1: '<path d="M10 34c0-8 8-16 22-16s22 8 22 16-8 10-22 10-22-2-22-10z" fill="#D9A15A"/><path d="M20 24q4 6 0 14M32 22q4 8 0 16M44 24q4 6 0 14" stroke="#B87738" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    pd2: '<rect x="16" y="16" width="32" height="28" rx="4" fill="#E0A857"/><path d="M16 24h32M16 32h32" stroke="#B87738" stroke-width="1.6"/>',
+    pd3: '<ellipse cx="32" cy="34" rx="20" ry="9" fill="#C98A3B"/><rect x="12" y="20" width="40" height="16" rx="6" fill="#E0A857"/><path d="M18 20q14 8 28 0" stroke="#B87738" stroke-width="1.6" fill="none"/>',
+    pd4: '<circle cx="32" cy="30" r="17" fill="#D9A15A"/><circle cx="32" cy="30" r="6.5" fill="#F7E8C9"/><path d="M22 22q4 10 0 16M42 22q-4 10 0 16" stroke="#B87738" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    ht1: '<circle cx="32" cy="32" r="16" fill="#C1443A"/><path d="M28 17c1-3 5-4 8-2" stroke="#4E7A45" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="26" cy="26" rx="4" ry="2.4" fill="rgba(255,255,255,0.25)"/>',
+    ht2: '<path d="M20 16c14 0 22 10 22 22 0 6-5 9-10 8-10-2-16-12-14-24 0-3 1-6 2-6z" fill="#E8C24B"/><path d="M20 16c-1 4-1 9 0 14" stroke="#C9A030" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    ht3: '<path d="M32 16c8 2 12 9 12 16 0 8-6 14-12 14s-12-6-12-14c0-7 4-14 12-16z" fill="#C99BC9"/><path d="M32 10c2 2 2 4 0 6-2-2-2-4 0-6z" fill="#4E7A45"/><path d="M24 26q8-4 16 0" stroke="#A874A8" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    ht4: '<ellipse cx="32" cy="32" rx="17" ry="13" fill="#C9A876"/><circle cx="26" cy="28" r="1.6" fill="#9C7C51"/><circle cx="38" cy="34" r="1.6" fill="#9C7C51"/><circle cx="34" cy="24" r="1.6" fill="#9C7C51"/>',
+    ht5: '<path d="M32 46c-10-2-18-12-16-24 8 0 12 4 14 10 2-8 6-12 14-14 4 12-2 26-12 28z" fill="#6B9B4F"/><path d="M32 46c0-10 2-18 8-24" stroke="#4E7A45" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+    fr1: '<path d="M14 40l6-24 24 4-4 24z" fill="#F3D98B"/><circle cx="24" cy="26" r="1.8" fill="#D9B968"/><circle cx="32" cy="32" r="1.8" fill="#D9B968"/><circle cx="20" cy="34" r="1.8" fill="#D9B968"/>',
+    fr2: '<path d="M16 20c8-4 24-4 32 0-2 12-2 20 0 24-8 4-24 4-32 0 2-4 2-12 0-24z" fill="#E38A8A"/><path d="M16 20q16 6 32 0M16 44q16-6 32 0" stroke="#C96363" stroke-width="1.6" fill="none"/>',
+    fr3: '<path d="M22 18h20l2 8-3 18a3 3 0 0 1-3 3H26a3 3 0 0 1-3-3l-3-18z" fill="#F4F4F0"/><rect x="20" y="16" width="24" height="5" rx="2" fill="#8EC1DD"/>',
+    fr4: '<rect x="14" y="22" width="36" height="18" rx="2" fill="#F3E9C7"/><rect x="14" y="22" width="36" height="6" fill="#E8C24B"/>',
+  };
+  const CATEGORIES = ['Todos', 'Açougue', 'Padaria', 'Hortifruti', 'Frios'];
+  const WHATSAPP_LINK = 'https://wa.me/message/SBNOLLDYHAIOD1';
+  // Used specifically for the final "send order" step, since wa.me/message links
+  // don't support a pre-filled message — a plain phone-number link does.
+  const WHATSAPP_ORDER_PHONE = '55' + '83' + '96520477'; // (83) 9652-0477
+
+  let activeCat = 'Todos';
+  let qtyDraft = {};      // product id -> qty selector value before adding (unit items)
+  let weightDraft = {};   // product id -> {amount, unit:'g'|'kg'} before adding (kg items)
+  let cart = {};          // product id -> qty in cart (kg items store the amount in kg)
+  let deliveryType = 'Entrega';
+  let paymentType = 'Dinheiro';
+  let step = 'cart';
+
+  const fmt = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
+  const toKg = (amount, unit) => unit === 'kg' ? amount : amount / 1000;
+  function formatWeight(kgQty){
+    if(kgQty < 1) return Math.round(kgQty * 1000) + ' g';
+    const trimmed = parseFloat(kgQty.toFixed(3));
+    return trimmed.toString().replace('.', ',') + ' kg';
+  }
+
+  // ---------- TABS ----------
+  const tabsEl = document.getElementById('tabs');
+  CATEGORIES.forEach(cat => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (cat === activeCat ? ' active' : '');
+    b.textContent = cat;
+    b.onclick = () => { activeCat = cat; renderTabs(); renderProducts(); };
+    b.dataset.cat = cat;
+    tabsEl.appendChild(b);
+  });
+  function renderTabs(){
+    [...tabsEl.children].forEach(b => b.classList.toggle('active', b.dataset.cat === activeCat));
+  }
+
+  // ---------- PRODUCTS ----------
+  const gridEl = document.getElementById('product-grid');
+  function renderProducts(){
+    gridEl.innerHTML = '';
+    const list = PRODUCTS.filter(p => activeCat === 'Todos' || p.cat === activeCat);
+    list.forEach(p => {
+      const photoInner = p.photo
+        ? `<img class="product-photo-img" src="${p.photo}" alt="${p.name}">`
+        : `<svg viewBox="0 0 64 64">${ICONS[p.id] || ''}</svg>`;
+      const card = document.createElement('div');
+      card.className = 'product-card cat-' + p.cat;
+
+      if(p.unit === 'kg'){
+        if(!(p.id in weightDraft)) weightDraft[p.id] = { amount: 500, unit: 'g' };
+        const draft = weightDraft[p.id];
+        const displayValue = (amount, unit) => unit === 'kg'
+          ? String(amount).replace('.', ',')
+          : String(Math.round(amount));
+        card.innerHTML = `
+          <div class="product-photo">${photoInner}</div>
+          <div class="product-card-body">
+            <span class="product-cat">${p.cat}</span>
+            <span class="product-name">${p.name}</span>
+            <span class="product-price">${fmt(p.price)} <span>/ kg</span></span>
+          </div>
+          <div class="product-actions">
+            <div class="weight-row">
+              <input type="text" inputmode="decimal" class="weight-input" data-amount value="${displayValue(draft.amount, draft.unit)}">
+              <div class="unit-toggle">
+                <button type="button" data-unit="g" class="${draft.unit === 'g' ? 'active' : ''}">g</button>
+                <button type="button" data-unit="kg" class="${draft.unit === 'kg' ? 'active' : ''}">kg</button>
+              </div>
+            </div>
+            <span class="price-preview" data-preview>≈ ${fmt(toKg(draft.amount, draft.unit) * p.price)}</span>
+            <button class="add-btn" data-act="add">Adicionar</button>
+          </div>
+        `;
+        const input = card.querySelector('[data-amount]');
+        const preview = card.querySelector('[data-preview]');
+        const unitBtns = card.querySelectorAll('.unit-toggle button');
+        const addBtn = card.querySelector('[data-act="add"]');
+
+        function updatePreview(){
+          const kgQty = toKg(draft.amount, draft.unit);
+          preview.textContent = '≈ ' + fmt(kgQty * p.price);
+        }
+        input.oninput = () => {
+          // A comma or period means the person is typing a decimal amount — that
+          // only makes sense in kg, so auto-switch the toggle if still on "g".
+          if(/[.,]/.test(input.value) && draft.unit !== 'kg'){
+            draft.unit = 'kg';
+            unitBtns.forEach(b => b.classList.toggle('active', b.dataset.unit === 'kg'));
+          }
+          // Sanitize: only digits, at most one comma, at most 3 decimal digits.
+          let cleaned = input.value.replace(/[^0-9.,]/g, '');
+          const sepIndex = cleaned.search(/[.,]/);
+          if(sepIndex !== -1){
+            const intPart = cleaned.slice(0, sepIndex).replace(/[.,]/g, '');
+            const decPart = cleaned.slice(sepIndex + 1).replace(/[.,]/g, '').slice(0, 3);
+            cleaned = intPart + ',' + decPart;
+          }
+          if(cleaned !== input.value) input.value = cleaned;
+          draft.amount = Math.max(0, parseFloat(cleaned.replace(',', '.')) || 0);
+          updatePreview();
+        };
+        unitBtns.forEach(btn => {
+          btn.onclick = () => {
+            const newUnit = btn.dataset.unit;
+            if(newUnit !== draft.unit){
+              draft.amount = newUnit === 'kg'
+                ? parseFloat((draft.amount / 1000).toFixed(2))
+                : Math.round(draft.amount * 1000);
+              draft.unit = newUnit;
+              input.value = displayValue(draft.amount, draft.unit);
+              unitBtns.forEach(b => b.classList.toggle('active', b === btn));
+              updatePreview();
+            }
+          };
+        });
+        addBtn.onclick = () => {
+          const kgQty = toKg(draft.amount, draft.unit);
+          if(kgQty <= 0) return;
+          cart[p.id] = (cart[p.id] || 0) + kgQty;
+          weightDraft[p.id] = { amount: 500, unit: 'g' };
+          renderProducts();
+          renderCart();
+        };
+      } else {
+        if(!(p.id in qtyDraft)) qtyDraft[p.id] = 1;
+        card.innerHTML = `
+          <div class="product-photo">${photoInner}</div>
+          <div class="product-card-body">
+            <span class="product-cat">${p.cat}</span>
+            <span class="product-name">${p.name}</span>
+            <span class="product-price">${fmt(p.price)} <span>/ ${p.unit}</span></span>
+          </div>
+          <div class="product-actions">
+            <div class="qty-stepper">
+              <button aria-label="Diminuir quantidade" data-act="dec">–</button>
+              <span data-qty>${qtyDraft[p.id]}</span>
+              <button aria-label="Aumentar quantidade" data-act="inc">+</button>
+            </div>
+            <button class="add-btn" data-act="add">Adicionar</button>
+          </div>
+        `;
+        const qtySpan = card.querySelector('[data-qty]');
+        card.querySelector('[data-act="dec"]').onclick = () => {
+          qtyDraft[p.id] = Math.max(1, qtyDraft[p.id] - 1);
+          qtySpan.textContent = qtyDraft[p.id];
+        };
+        card.querySelector('[data-act="inc"]').onclick = () => {
+          qtyDraft[p.id] = qtyDraft[p.id] + 1;
+          qtySpan.textContent = qtyDraft[p.id];
+        };
+        const addBtn = card.querySelector('[data-act="add"]');
+        addBtn.onclick = () => {
+          cart[p.id] = (cart[p.id] || 0) + qtyDraft[p.id];
+          qtyDraft[p.id] = 1;
+          qtySpan.textContent = 1;
+          addBtn.textContent = 'Adicionado ✓';
+          addBtn.classList.add('added');
+          setTimeout(() => { addBtn.textContent = 'Adicionar'; addBtn.classList.remove('added'); }, 900);
+          renderCart();
+        };
+      }
+
+      gridEl.appendChild(card);
+    });
+  }
+
+  // ---------- CART ----------
+  const cartListEl = document.getElementById('cart-list');
+  const cartTotalEl = document.getElementById('cart-total');
+  const cartCountLabel = document.getElementById('cart-count-label');
+  const checkoutBtn = document.getElementById('btn-checkout');
+  const fabCount = document.getElementById('fab-count');
+
+  function cartEntries(){
+    return Object.keys(cart).filter(id => cart[id] > 0).map(id => {
+      const p = PRODUCTS.find(x => x.id === id);
+      return { ...p, qty: cart[id] };
+    });
+  }
+  function cartTotal(){
+    return cartEntries().reduce((sum, item) => sum + item.price * item.qty, 0);
+  }
+  function renderCart(){
+    const entries = cartEntries();
+    const totalItems = entries.length;
+    cartListEl.innerHTML = '';
+    if(entries.length === 0){
+      cartListEl.innerHTML = '<div class="cart-empty">Seu carrinho está vazio.<br>Adicione produtos ao lado.</div>';
+      cartCountLabel.textContent = 'Carrinho vazio';
+      checkoutBtn.disabled = true;
+    } else {
+      cartCountLabel.textContent = totalItems + (totalItems === 1 ? ' item' : ' itens') + ' no carrinho';
+      checkoutBtn.disabled = false;
+      entries.forEach(item => {
+        const qtyLabel = item.unit === 'kg'
+          ? formatWeight(item.qty) + ' × ' + fmt(item.price) + '/kg'
+          : item.qty + ' ' + item.unit + ' × ' + fmt(item.price);
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <span class="cart-item-name">${item.name}<small>${qtyLabel}</small></span>
+          <span>${fmt(item.price * item.qty)}</span>
+          <button class="cart-item-remove" aria-label="Remover ${item.name}">✕</button>
+        `;
+        row.querySelector('.cart-item-remove').onclick = () => {
+          delete cart[item.id];
+          renderCart();
+        };
+        cartListEl.appendChild(row);
+      });
+    }
+    cartTotalEl.textContent = fmt(cartTotal());
+    fabCount.textContent = totalItems;
+  }
+
+  // ---------- STEP NAV ----------
+  const stepCart = document.getElementById('step-cart');
+  const stepCheckout = document.getElementById('step-checkout');
+  const stepSummary = document.getElementById('step-summary');
+  function showStep(s){
+    step = s;
+    stepCart.style.display = s === 'cart' ? '' : 'none';
+    stepCheckout.style.display = s === 'checkout' ? '' : 'none';
+    stepSummary.style.display = s === 'summary' ? '' : 'none';
+  }
+  checkoutBtn.onclick = () => showStep('checkout');
+  document.getElementById('btn-back-1').onclick = () => showStep('cart');
+  document.getElementById('btn-back-2').onclick = () => showStep('checkout');
+
+  // delivery type toggle
+  const optEntrega = document.getElementById('opt-entrega');
+  const optRetirada = document.getElementById('opt-retirada');
+  const enderecoGroup = document.getElementById('endereco-group');
+  optEntrega.onclick = () => { deliveryType = 'Entrega'; optEntrega.classList.add('active'); optRetirada.classList.remove('active'); enderecoGroup.style.display = ''; };
+  optRetirada.onclick = () => { deliveryType = 'Retirada na loja'; optRetirada.classList.add('active'); optEntrega.classList.remove('active'); enderecoGroup.style.display = 'none'; };
+
+  // payment toggle
+  document.querySelectorAll('.radio-row')[1].querySelectorAll('.radio-opt').forEach(opt => {
+    opt.onclick = () => {
+      document.querySelectorAll('.radio-row')[1].querySelectorAll('.radio-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      paymentType = opt.dataset.value;
+    };
+  });
+
+  // ---------- SUMMARY ----------
+  document.getElementById('btn-summary').onclick = () => {
+    const nome = document.getElementById('f-nome').value.trim();
+    const tel = document.getElementById('f-tel').value.trim();
+    const errorEl = document.getElementById('form-error');
+    if(!nome || !tel){
+      errorEl.style.display = 'block';
+      return;
+    }
+    errorEl.style.display = 'none';
+
+    const end = document.getElementById('f-end').value.trim();
+    const obs = document.getElementById('f-obs').value.trim();
+    const entries = cartEntries();
+
+    let msg = `*Pedido — Mercado Império*\n\n`;
+    entries.forEach(item => {
+      const qtyLabel = item.unit === 'kg' ? formatWeight(item.qty) : `${item.qty} ${item.unit}`;
+      msg += `• ${item.name} — ${qtyLabel} (${fmt(item.price * item.qty)})\n`;
+    });
+    msg += `\n*Subtotal:* ${fmt(cartTotal())}\n\n`;
+    msg += `*Cliente:* ${nome}\n*Telefone:* ${tel}\n`;
+    msg += `*Entrega:* ${deliveryType}\n`;
+    if(deliveryType === 'Entrega' && end) msg += `*Endereço:* ${end}\n`;
+    msg += `*Pagamento:* ${paymentType}\n`;
+    if(obs) msg += `*Observações:* ${obs}\n`;
+
+    document.getElementById('summary-text').textContent = msg;
+    document.getElementById('btn-whatsapp').dataset.msg = msg;
+    document.getElementById('copy-note').textContent = '';
+    showStep('summary');
+  };
+
+  document.getElementById('btn-whatsapp').onclick = function(){
+    const msg = this.dataset.msg || '';
+    const url = 'https://wa.me/' + WHATSAPP_ORDER_PHONE + '?text=' + encodeURIComponent(msg);
+    // Open immediately (synchronously) on click, or most browsers block it as a popup.
+    window.open(url, '_blank');
+    copyToClipboard(msg);
+    document.getElementById('copy-note').textContent = 'Se o WhatsApp abrir sem o pedido, cole o texto (já copiado) na conversa 👇';
+  };
+
+  document.getElementById('btn-copy').onclick = function(){
+    const msg = document.getElementById('btn-whatsapp').dataset.msg || '';
+    copyToClipboard(msg);
+    document.getElementById('copy-note').textContent = 'Pedido copiado ✓';
+  };
+
+  function copyToClipboard(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+  function fallbackCopy(text){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  // ---------- MOBILE FAB ----------
+  const cartPanel = document.getElementById('cart-panel');
+  const fab = document.getElementById('cart-fab');
+  fab.onclick = () => cartPanel.classList.toggle('open');
+
+  renderTabs();
+  renderProducts();
+  renderCart();
+})();
+</script>
+</body>
+</html>
